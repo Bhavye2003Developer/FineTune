@@ -1,11 +1,15 @@
 "use client";
 
 import { UploadIcon } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef } from "react";
+import { useVAFileManager } from "./utils/useVAFileManager";
+import { toast } from "sonner";
 
 export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [files, setFiles] = useState<File[]>([]);
+  const MAX_FILE_BYTES = 1024 * 1024 * 50;
+
+  const { storedFiles, addFile } = useVAFileManager();
 
   return (
     <div className="flex min-h-screen bg-zinc-100 text-zinc-900 dark:bg-black dark:text-zinc-100">
@@ -23,7 +27,11 @@ export default function Home() {
           onChange={(e) => {
             const tmpFiles = e.target.files;
             if (tmpFiles) {
-              setFiles([...files, ...tmpFiles]);
+              for (const tmpFile of tmpFiles) {
+                if (tmpFile.size > MAX_FILE_BYTES)
+                  toast.error("You can't upload a file more than 50MB!");
+                else addFile(tmpFile);
+              }
             }
           }}
         />
@@ -42,8 +50,8 @@ export default function Home() {
           </div>
 
           <div className="space-y-3 text-sm">
-            {files.length > 0 ? (
-              files.map((file, idx) => (
+            {storedFiles && storedFiles.length > 0 ? (
+              storedFiles.map((file, idx) => (
                 <div
                   key={idx}
                   className="rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-2 dark:border-zinc-800 dark:bg-zinc-800/40"
