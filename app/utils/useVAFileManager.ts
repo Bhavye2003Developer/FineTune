@@ -1,5 +1,6 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { indexedDB } from "./db";
+import { toast } from "sonner";
 
 export const useVAFileManager = () => {
   const storedFiles = useLiveQuery(() => indexedDB.vaFiles.toArray(), []);
@@ -17,6 +18,7 @@ export const useVAFileManager = () => {
 
   const removeFile = async (id: number) => {
     await indexedDB.vaFiles.delete(id);
+    toast.success("File deleted successfully.");
   };
 
   return { storedFiles, addFile, removeFile };

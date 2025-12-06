@@ -8,8 +8,6 @@ import { MAX_FILE_BYTES, MEGABYTE, STORAGE_LIMIT } from "./utils/constants";
 import { motion } from "framer-motion";
 import FileListView from "./components/FileListView";
 
-// TODOS 1. Delete. 2. add via filename check
-
 export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { storedFiles, addFile } = useVAFileManager();
@@ -24,6 +22,8 @@ export default function Home() {
     }
     return 0;
   }, [storedFiles]);
+
+  const filenames = storedFiles?.map((file) => file.name);
 
   return (
     <div className="flex min-h-screen bg-zinc-100 text-zinc-900 dark:bg-black dark:text-zinc-100">
@@ -57,6 +57,8 @@ export default function Home() {
                   toast.error(
                     "Max files storage size limit reached, please remove any file"
                   );
+                else if (filenames && filenames.includes(tmpFile.name))
+                  toast.error("File with name already exists!");
                 else addFile(tmpFile);
               }
             }
