@@ -15,5 +15,9 @@ export const useVAFileManager = () => {
     });
   };
 
-  return { storedFiles, addFile };
+  const removeFile = async (id: number) => {
+    await indexedDB.vaFiles.delete(id);
+  };
+
+  return { storedFiles, addFile, removeFile };
 };

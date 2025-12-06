@@ -1,28 +1,14 @@
 "use client";
 
-import { UploadIcon, Music, Video, FileAudio } from "lucide-react";
+import { UploadIcon } from "lucide-react";
 import { useMemo, useRef } from "react";
 import { useVAFileManager } from "./utils/useVAFileManager";
 import { toast } from "sonner";
 import { MAX_FILE_BYTES, MEGABYTE, STORAGE_LIMIT } from "./utils/constants";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import FileListView from "./components/FileListView";
 
-export const getFileIcon = (name: string, mime?: string) => {
-  const lower = name.toLowerCase();
-  if (
-    lower.endsWith(".mp3") ||
-    lower.endsWith(".wav") ||
-    mime?.startsWith("audio")
-  )
-    return <Music className="h-5 w-5" />;
-  if (
-    lower.endsWith(".mp4") ||
-    lower.endsWith(".mkv") ||
-    mime?.startsWith("video")
-  )
-    return <Video className="h-6 w-6" />;
-  return <FileAudio className="h-5 w-5" />;
-};
+// TODOS 1. Delete. 2. add via filename check
 
 export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -87,52 +73,7 @@ export default function Home() {
           Upload Files
         </motion.button>
 
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border border-zinc-300 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/60 backdrop-blur-sm"
-        >
-          <div className="mb-4 text-xl font-semibold tracking-tight">
-            File Stack
-          </div>
-
-          <div className="space-y-3 text-sm">
-            <AnimatePresence mode="popLayout">
-              {storedFiles && storedFiles.length > 0 ? (
-                storedFiles.map((file, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    className="flex items-center justify-between rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-800/40 transition-all hover:bg-zinc-100 dark:hover:bg-zinc-700/50"
-                  >
-                    <div className="flex items-center gap-3">
-                      {getFileIcon(file.name, file.type)}
-
-                      <div className="flex flex-col">
-                        <span className="font-medium text-zinc-900 dark:text-zinc-200">
-                          {file.name}
-                        </span>
-                        <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                          {new Date(file.dt).toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))
-              ) : (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="py-2 text-zinc-500 dark:text-zinc-400"
-                >
-                  No audio/video file uploaded yet.
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </motion.div>
+        <FileListView />
       </main>
     </div>
   );
