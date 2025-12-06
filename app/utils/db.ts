@@ -4,7 +4,10 @@ import Dexie, { Table } from "dexie";
 export interface VAFile {
   id?: number;
   name: string;
+  type: string;
   size: number;
+  dt: Date;
+  content: ArrayBuffer;
 }
 
 export class VAFileDatabase extends Dexie {
@@ -13,8 +16,8 @@ export class VAFileDatabase extends Dexie {
   constructor() {
     super("VAFileDB");
 
-    this.version(2).stores({
-      vaFiles: "++id, name, size",
+    this.version(3).stores({
+      vaFiles: "++id, name, type, size, date, content",
     });
   }
 }
