@@ -2,11 +2,12 @@
 
 import { UploadIcon } from "lucide-react";
 import { useMemo, useRef } from "react";
-import { useVAFileManager } from "./utils/useVAFileManager";
+import { useVAFileManager } from "./utils/hooks/useVAFileManager";
 import { toast } from "sonner";
 import { MAX_FILE_BYTES, MEGABYTE, STORAGE_LIMIT } from "./utils/constants";
 import { motion } from "framer-motion";
 import FileListView from "./components/FileListView";
+import Player from "./components/Player";
 
 export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -15,7 +16,7 @@ export default function Home() {
   const totalStoredFilesSize = useMemo(() => {
     if (storedFiles) {
       const totalFilesSize = storedFiles.reduce(
-        (prev, file) => prev + file.size,
+        (prev, file) => prev + file.blob.size,
         0
       );
       return totalFilesSize;
@@ -29,13 +30,13 @@ export default function Home() {
     <div className="flex min-h-screen bg-zinc-100 text-zinc-900 dark:bg-black dark:text-zinc-100">
       <main className="mx-auto flex w-full max-w-3xl flex-col px-8 py-16">
         <h1 className="mb-8 text-4xl font-semibold tracking-tight">
-          Local Player
+          Off Player
         </h1>
 
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-10 flex w-fit items-center gap-2 rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm text-zinc-700 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-300 backdrop-blur-sm"
+          className="mb-2 flex w-fit items-center gap-2 rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm text-zinc-700 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-300 backdrop-blur-sm"
         >
           <span className="font-medium">Storage Used:</span>
           <span>{Math.round(totalStoredFilesSize / MEGABYTE)} MB</span>
@@ -65,11 +66,13 @@ export default function Home() {
           }}
         />
 
+        <Player />
+
         <motion.button
           whileTap={{ scale: 0.97 }}
           whileHover={{ scale: 1.02 }}
           onClick={() => fileInputRef.current?.click()}
-          className="mb-12 flex w-fit items-center gap-3 rounded-2xl border border-zinc-300 bg-white px-5 py-3 text-sm font-medium shadow-sm transition-colors hover:border-zinc-400 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:bg-zinc-800"
+          className="mt-2 mb-12 flex w-fit items-center gap-3 rounded-2xl border border-zinc-300 bg-white px-5 py-3 text-sm font-medium shadow-sm transition-colors hover:border-zinc-400 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:bg-zinc-800"
         >
           <UploadIcon className="h-5 w-5" />
           Upload Files

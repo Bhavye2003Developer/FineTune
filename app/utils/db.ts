@@ -5,9 +5,8 @@ export interface VAFile {
   id?: number;
   name: string;
   type: string;
-  size: number;
   dt: Date;
-  content: ArrayBuffer;
+  blob: File;
 }
 
 export class VAFileDatabase extends Dexie {
@@ -17,7 +16,7 @@ export class VAFileDatabase extends Dexie {
     super("VAFileDB");
 
     this.version(3).stores({
-      vaFiles: "++id, name, type, size, date, content",
+      vaFiles: "++id, name, type, date, blob",
     });
   }
 }

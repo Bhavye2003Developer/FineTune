@@ -1,12 +1,14 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useVAFileManager } from "../utils/useVAFileManager";
+import { useVAFileManager } from "../utils/hooks/useVAFileManager";
 import FileIcon from "./FileIcon";
 import { Trash2 } from "lucide-react";
+import usePlayerStore from "../utils/hooks/usePlayerStore";
 
 const FileListView = () => {
   const { storedFiles, removeFile } = useVAFileManager();
+  const { selectFile } = usePlayerStore();
 
   return (
     <motion.div
@@ -45,7 +47,10 @@ const FileListView = () => {
                   cursor-default
                 "
               >
-                <div className="flex items-center gap-3 overflow-hidden">
+                <div
+                  className="flex items-center gap-3 overflow-hidden"
+                  onClick={() => selectFile(file)}
+                >
                   <FileIcon name={file.name} mime={file.type} />
 
                   <div className="flex flex-col overflow-hidden">
@@ -65,7 +70,10 @@ const FileListView = () => {
                 </div>
 
                 <button
-                  onClick={() => removeFile(file.id || 0)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeFile(file.id || 0);
+                  }}
                   className="
                     transition-opacity duration-150 
                     p-2 rounded-lg 
