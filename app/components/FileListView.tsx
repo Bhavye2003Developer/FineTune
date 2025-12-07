@@ -1,10 +1,10 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useVAFileManager } from "../utils/hooks/useVAFileManager";
+import { useVAFileManager } from "../../lib/hooks/useVAFileManager";
 import FileIcon from "./FileIcon";
 import { Trash2 } from "lucide-react";
-import usePlayerStore from "../utils/hooks/usePlayerStore";
+import usePlayerStore from "../../lib/hooks/usePlayerStore";
 
 const FileListView = () => {
   const { storedFiles, removeFile } = useVAFileManager();
