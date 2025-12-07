@@ -33,6 +33,8 @@ const Player = () => {
       setPlay(false);
     };
 
+    audioRef.current.onended = () => setPlay(false);
+
     return () => URL.revokeObjectURL(url);
   }, [selectedFile]);
 
