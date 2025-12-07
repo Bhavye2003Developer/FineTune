@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import usePlayerStore from "../utils/hooks/usePlayerStore";
 import { Play, Pause, Repeat } from "lucide-react";
