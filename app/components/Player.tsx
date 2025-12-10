@@ -25,7 +25,7 @@ const Player = () => {
       return;
     }
 
-    audioRef.current.stop();
+    audioRef.current.pause();
 
     const url = URL.createObjectURL(selectedFile.blob);
     audioRef.current.src = url;
