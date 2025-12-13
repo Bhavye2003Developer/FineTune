@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import usePlayerStore from "../../lib/hooks/usePlayerStore";
-import { Play, Pause, Repeat } from "lucide-react";
+import { Play, Pause, Repeat, VolumeX, Volume2 } from "lucide-react";
 import { fmt } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 
@@ -13,6 +13,7 @@ const Player = () => {
   const [currentDuration, setCurrentDuration] = useState(0);
   const [isPlay, setPlay] = useState(false);
   const [isLooped, setIsLooped] = useState(false);
+  const [isMute, setIsMute] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const objectUrlRef = useRef<string | null>(null);
@@ -51,23 +52,9 @@ const Player = () => {
     objectUrlRef.current = url;
     audio.src = url;
 
-    audio.onloadedmetadata = () => {
-      setDuration(audio.duration || 0);
-    };
-
-    audio.ontimeupdate = () => {
-      setCurrentDuration(audio.currentTime);
-    };
-
-    audio.onended = () => {
-      if (!audio.loop) setPlay(false);
-    };
-
-    audio.onerror = () => {
-      setPlay(false);
-      setDuration(0);
-      setCurrentDuration(0);
-    };
+    audio.onloadedmetadata = () => setDuration(audio.duration || 0);
+    audio.ontimeupdate = () => setCurrentDuration(audio.currentTime);
+    audio.onended = () => !audio.loop && setPlay(false);
   }, [selectedFile]);
 
   useEffect(() => {
@@ -75,91 +62,92 @@ const Player = () => {
     if (!audio || !selectedFile) return;
 
     audio.loop = isLooped;
+    audio.muted = isMute;
 
     if (isPlay) audio.play();
     else audio.pause();
-  }, [isPlay, isLooped, selectedFile]);
-
-  const handleSeek = (value: number[]) => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    audio.currentTime = value[0];
-    setCurrentDuration(value[0]);
-  };
+  }, [isPlay, isLooped, isMute, selectedFile]);
 
   return (
     <div
       className="
-        rounded-2xl border border-zinc-300 bg-white/70
-        m-2 p-6 shadow-sm backdrop-blur-md
-        dark:border-zinc-700 dark:bg-zinc-900/40
+        m-3 rounded-3xl
+        border border-zinc-200/70 dark:border-zinc-700/60
+        bg-white/60 dark:bg-zinc-900/50
+        p-6 backdrop-blur-xl shadow-xl
       "
     >
-      <div className="mb-3 text-lg font-semibold text-zinc-800 dark:text-zinc-200">
+      <div className="mb-1 text-sm uppercase tracking-wide text-zinc-500">
         Now Playing
       </div>
 
-      <div className="mb-5 truncate text-sm font-medium text-zinc-700 dark:text-zinc-300">
+      <div className="mb-6 truncate text-base font-semibold text-zinc-800 dark:text-zinc-200">
         {selectedFile?.name || "No file selected"}
       </div>
 
-      <div className="flex items-center justify-between mb-4">
-        <div className="text-sm text-zinc-600 dark:text-zinc-400">
-          {fmt(currentDuration)} /{" "}
-          <span className="font-semibold">{fmt(duration)}</span>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button
-            disabled={!selectedFile}
-            onClick={() => setPlay((p) => !p)}
-            className="
-              flex items-center gap-2 rounded-xl
-              border border-zinc-200 dark:border-zinc-700
-              bg-zinc-100 dark:bg-zinc-800
-              px-4 py-2 text-sm font-medium
-              transition-all duration-200
-              hover:bg-zinc-200 dark:hover:bg-zinc-700
-              active:scale-95 disabled:opacity-50
-            "
-          >
-            {isPlay ? (
-              <>
-                <Pause className="h-4 w-4" />
-                Pause
-              </>
-            ) : (
-              <>
-                <Play className="h-4 w-4" />
-                Play
-              </>
-            )}
-          </button>
-
-          <button
-            onClick={() => setIsLooped((l) => !l)}
-            className={`
-              flex items-center rounded-xl
-              border border-zinc-200 dark:border-zinc-700
-              bg-zinc-100 dark:bg-zinc-800
-              px-3 py-2 transition-all duration-200
-              hover:bg-zinc-200 dark:hover:bg-zinc-700
-              active:scale-95
-              ${isLooped ? "text-green-400 ring-1 ring-green-400/50" : ""}
-            `}
-          >
-            <Repeat className="h-4 w-4" />
-          </button>
-        </div>
+      <div className="mb-2">
+        <Slider
+          value={[currentDuration]}
+          max={duration || 0}
+          step={0.1}
+          onValueChange={(v) => {
+            audioRef.current!.currentTime = v[0];
+            setCurrentDuration(v[0]);
+          }}
+        />
       </div>
 
-      <Slider
-        value={[currentDuration]}
-        max={duration || 0}
-        step={0.1}
-        onValueChange={handleSeek}
-      />
+      <div className="mb-5 flex justify-between text-xs text-zinc-500">
+        <span>{fmt(currentDuration)}</span>
+        <span>{fmt(duration)}</span>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <button
+          onClick={() => setIsMute((m) => !m)}
+          className="
+            rounded-xl border border-zinc-200 dark:border-zinc-700
+            bg-zinc-100 dark:bg-zinc-800
+            p-2 transition hover:bg-zinc-200 dark:hover:bg-zinc-700
+          "
+        >
+          {isMute ? (
+            <VolumeX className="h-4 w-4 text-red-400" />
+          ) : (
+            <Volume2 className="h-4 w-4" />
+          )}
+        </button>
+
+        <button
+          disabled={!selectedFile}
+          onClick={() => setPlay((p) => !p)}
+          className="
+            flex h-12 w-12 items-center justify-center
+            rounded-full
+            bg-linear-to-br from-indigo-500 to-purple-600
+            text-white shadow-lg
+            transition active:scale-95 disabled:opacity-50
+          "
+        >
+          {isPlay ? (
+            <Pause className="h-5 w-5" />
+          ) : (
+            <Play className="h-5 w-5 translate-x-px" />
+          )}
+        </button>
+
+        <button
+          onClick={() => setIsLooped((l) => !l)}
+          className={`
+            rounded-xl border border-zinc-200 dark:border-zinc-700
+            bg-zinc-100 dark:bg-zinc-800
+            p-2 transition hover:bg-zinc-200 dark:hover:bg-zinc-700
+            ${isLooped ? "text-green-400 ring-1 ring-green-400/40" : ""}
+          `}
+        >
+          <Repeat className="h-4 w-4" />
+        </button>
+      </div>
     </div>
   );
 };
