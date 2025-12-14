@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FineTune
 
-## Getting Started
+A **modern, offline local media player** built for the web. FineTune allows users to upload, manage, and play **audio and video files directly in the browser** with a clean, professional UI and smooth playback experience.
 
-First, run the development server:
+The app is designed with a focus on **performance, simplicity, and aesthetics**, while keeping everything fully local — no server uploads, no external storage.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Local File Upload
+  Upload audio and video files directly from your device.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Audio & Video Playback
+  Play supported media files seamlessly using the built-in player.
 
-## Learn More
+- Loop Playback
+  Enable loop mode to repeat the currently playing file.
 
-To learn more about Next.js, take a look at the following resources:
+- Play Next Feature
+  Automatically plays the next file in the list after the current one finishes.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Storage Management
+  Enforces per-file and total storage constraints.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## How It Works
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Files are stored **locally in the browser** (no cloud, no backend).
+- Storage limits are enforced at upload time to prevent overflow.
+- Playback is handled via the HTML5 Audio/Video APIs.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Storage
+
+| Storage Aspect        | Details                                      |
+| --------------------- | -------------------------------------------- |
+| Maximum file size     | 120 MB per file                              |
+| Maximum total storage | 150 MB                                       |
+| Storage mechanism     | Browser-based persistent storage (IndexedDB) |
+
+---
+
+## Tech Stack
+
+- **Next.js / React** - Application framework
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Modern styling
+- **Framer Motion** - Animations
+- **Lucide Icons** - Clean iconography
+- **IndexedDB** - Local persistent storage
+
+---
+
+## Project Goals
+
+- Provide a **fully local media player** experience
+- Avoid server-side dependencies
+- Maintain a **clean, professional UI**
+- Enforce strict storage limits
+
+---
+
+## License
+
+This project is for personal and educational use. You are free to modify and extend it for your own projects.

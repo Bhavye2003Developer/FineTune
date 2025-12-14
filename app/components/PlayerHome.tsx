@@ -33,10 +33,11 @@ const PlayerHome = () => {
         className="
           mx-auto w-full max-w-xl
           px-4 sm:px-6
-          pt-6 pb-10
+          pt-6 pb-12
           space-y-6
         "
       >
+        {/* Header */}
         <div className="space-y-4">
           <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight">
             {APP_NAME}
@@ -61,6 +62,7 @@ const PlayerHome = () => {
           </motion.div>
         </div>
 
+        {/* File Input */}
         <input
           type="file"
           multiple
@@ -85,10 +87,12 @@ const PlayerHome = () => {
           }}
         />
 
+        {/* Player */}
         <section>
           <Player />
         </section>
 
+        {/* Upload Button */}
         <motion.button
           whileTap={{ scale: 0.98 }}
           whileHover={{ scale: 1.01 }}
@@ -108,9 +112,38 @@ const PlayerHome = () => {
           Upload files
         </motion.button>
 
+        {/* File List */}
         <section>
           <FileListView />
         </section>
+
+        {/* GitHub CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="
+            pt-6 text-center
+            text-xs sm:text-sm
+            text-zinc-500 dark:text-zinc-400
+          "
+        >
+          ⭐ If you liked the app, please{" "}
+          <a
+            href="https://github.com/Bhavye2003Developer/FineTune"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="
+              inline-flex items-center gap-1
+              font-medium
+              underline underline-offset-4
+              hover:text-zinc-800 dark:hover:text-zinc-200
+              transition-colors
+            "
+          >
+            star it on GitHub
+          </a>
+        </motion.div>
       </div>
     </main>
   );
