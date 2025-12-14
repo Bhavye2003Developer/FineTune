@@ -28,11 +28,10 @@ The app is designed with a focus on **performance, simplicity, and aesthetics**,
 - Playback is handled via the HTML5 Audio/Video APIs.
 
 
-
 ## Storage
 
 | Storage Aspect        | Details                                      |
-|  | -- |
+| --------------------- | -------------------------------------------- |
 | Maximum file size     | 120 MB per file                              |
 | Maximum total storage | 150 MB                                       |
 | Storage mechanism     | Browser-based persistent storage (IndexedDB) |
