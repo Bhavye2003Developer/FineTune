@@ -3,12 +3,12 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useVAFileManager } from "../../lib/hooks/useVAFileManager";
 import FileIcon from "./FileIcon";
-import { Trash2 } from "lucide-react";
+import { ListStart, Trash2 } from "lucide-react";
 import usePlayerStore from "../../lib/hooks/usePlayerStore";
 
 const FileListView = () => {
   const { storedFiles, removeFile } = useVAFileManager();
-  const { selectFile } = usePlayerStore();
+  const { selectFile, addToNext } = usePlayerStore();
 
   return (
     <motion.div
@@ -17,7 +17,7 @@ const FileListView = () => {
       className="
         rounded-2xl border border-zinc-200 
         bg-white/80 dark:bg-zinc-900/40 
-        shadow-lg backdrop-blur-xl 
+        shadow-lg backdrop-blur-xl
         p-6
       "
     >
@@ -72,7 +72,22 @@ const FileListView = () => {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    removeFile(file.id || 0);
+                    addToNext(file);
+                  }}
+                  title="Play next"
+                  className="
+    transition-all duration-150
+    p-2 rounded-lg
+    text-zinc-500 dark:text-zinc-400
+  "
+                >
+                  <ListStart className="h-4 w-4 stroke-[2.2]" />
+                </button>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeFile(file.id);
                   }}
                   className="
                     transition-opacity duration-150 

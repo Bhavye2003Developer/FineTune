@@ -2,7 +2,7 @@ import Dexie, { Table } from "dexie";
 
 // VAFile -> video/ audio file
 export interface VAFile {
-  id?: number;
+  id: string;
   name: string;
   type: string;
   dt: Date;
@@ -16,7 +16,7 @@ export class VAFileDatabase extends Dexie {
     super("VAFileDB");
 
     this.version(3).stores({
-      vaFiles: "++id, name, type, date, blob",
+      vaFiles: "id, name, type, date, blob",
     });
   }
 }

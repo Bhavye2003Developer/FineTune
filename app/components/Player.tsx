@@ -7,7 +7,7 @@ import { fmt } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 
 const Player = () => {
-  const { selectedFile } = usePlayerStore();
+  const { selectedFile, nextFile, selectFile } = usePlayerStore();
 
   const [duration, setDuration] = useState(0);
   const [currentDuration, setCurrentDuration] = useState(0);
@@ -28,10 +28,10 @@ const Player = () => {
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !selectedFile) return;
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setPlay(false);
+    setPlay(true);
     setCurrentDuration(0);
     setDuration(0);
 
@@ -40,22 +40,33 @@ const Player = () => {
 
     if (objectUrlRef.current) {
       URL.revokeObjectURL(objectUrlRef.current);
-      objectUrlRef.current = null;
-    }
-
-    if (!selectedFile) {
-      audio.src = "";
-      return;
     }
 
     const url = URL.createObjectURL(selectedFile.blob);
     objectUrlRef.current = url;
     audio.src = url;
 
-    audio.onloadedmetadata = () => setDuration(audio.duration || 0);
-    audio.ontimeupdate = () => setCurrentDuration(audio.currentTime);
-    audio.onended = () => !audio.loop && setPlay(false);
-  }, [selectedFile]);
+    audio.onloadedmetadata = () => {
+      setDuration(audio.duration || 0);
+
+      audio
+        .play()
+        .then(() => setPlay(true))
+        .catch(() => setPlay(false));
+    };
+
+    audio.ontimeupdate = () => {
+      setCurrentDuration(audio.currentTime);
+    };
+
+    audio.onended = () => {
+      if (nextFile) {
+        selectFile(nextFile);
+      } else {
+        setPlay(false);
+      }
+    };
+  }, [selectedFile, nextFile, selectFile]);
 
   useEffect(() => {
     const audio = audioRef.current;
