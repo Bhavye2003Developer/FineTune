@@ -36,8 +36,6 @@ The app is designed with a focus on **performance, simplicity, and aesthetics**,
 | Maximum total storage | 150 MB                                       |
 | Storage mechanism     | Browser-based persistent storage (IndexedDB) |
 
-
-
 ## Tech Stack
 
 - **Next.js / React** - Application framework
@@ -47,16 +45,32 @@ The app is designed with a focus on **performance, simplicity, and aesthetics**,
 - **Lucide Icons** - Clean iconography
 - **IndexedDB** - Local persistent storage
 
+## Installation
 
+1. Clone the repository:
+```bash
+   git clone https://github.com/Bhavye2003Developer/FineTune
+```
 
-## Project Goals
+2. Navigate into the project directory:
+```bash
+   cd FineTune
+```
 
-- Provide a **fully local media player** experience
-- Avoid server-side dependencies
-- Maintain a **clean, professional UI**
-- Enforce strict storage limits
+3. Install dependencies:
+```bash
+   npm install
+```
 
+4. Start the development server:
+```bash
+   npm run dev
+```
 
+5. Open your browser and go to:
+```
+   http://localhost:3000
+```
 
 ## License
 
