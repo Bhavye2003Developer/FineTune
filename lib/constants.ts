@@ -1,3 +1,5 @@
+export const APP_NAME = "FileTune";
+
 export const MEGABYTE = 1024 * 1024;
 
 export const MAX_FILE_BYTES = MEGABYTE * 120; // 120 MB

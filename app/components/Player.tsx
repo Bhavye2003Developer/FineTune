@@ -38,9 +38,7 @@ const Player = () => {
     audio.pause();
     audio.currentTime = 0;
 
-    if (objectUrlRef.current) {
-      URL.revokeObjectURL(objectUrlRef.current);
-    }
+    if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
 
     const url = URL.createObjectURL(selectedFile.blob);
     objectUrlRef.current = url;
@@ -48,55 +46,49 @@ const Player = () => {
 
     audio.onloadedmetadata = () => {
       setDuration(audio.duration || 0);
-
-      audio
-        .play()
-        .then(() => setPlay(true))
-        .catch(() => setPlay(false));
+      audio.play().catch(() => setPlay(false));
     };
 
-    audio.ontimeupdate = () => {
-      setCurrentDuration(audio.currentTime);
-    };
+    audio.ontimeupdate = () => setCurrentDuration(audio.currentTime);
 
     audio.onended = () => {
-      if (nextFile) {
-        selectFile(nextFile);
-      } else {
-        setPlay(false);
-      }
+      if (nextFile) selectFile(nextFile);
+      else setPlay(false);
     };
   }, [selectedFile, nextFile, selectFile]);
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio || !selectedFile) return;
+    if (!audio) return;
 
     audio.loop = isLooped;
     audio.muted = isMute;
 
     if (isPlay) audio.play();
     else audio.pause();
-  }, [isPlay, isLooped, isMute, selectedFile]);
+  }, [isPlay, isLooped, isMute]);
 
   return (
-    <div
+    <section
       className="
-        m-3 rounded-3xl
+        w-full
+        rounded-3xl
         border border-zinc-200/70 dark:border-zinc-700/60
-        bg-white/60 dark:bg-zinc-900/50
-        p-6 backdrop-blur-xl shadow-xl
+        bg-white/70 dark:bg-zinc-900/50
+        backdrop-blur-xl shadow-lg
+        px-5 py-6 sm:px-6
       "
     >
-      <div className="mb-1 text-sm uppercase tracking-wide text-zinc-500">
-        Now Playing
+      <div className="mb-4 space-y-1">
+        <div className="text-xs uppercase tracking-wide text-zinc-500">
+          Now Playing
+        </div>
+        <div className="truncate text-sm sm:text-base font-semibold text-zinc-800 dark:text-zinc-200">
+          {selectedFile?.name || "No file selected"}
+        </div>
       </div>
 
-      <div className="mb-6 truncate text-base font-semibold text-zinc-800 dark:text-zinc-200">
-        {selectedFile?.name || "No file selected"}
-      </div>
-
-      <div className="mb-2">
+      <div className="space-y-2">
         <Slider
           value={[currentDuration]}
           max={duration || 0}
@@ -106,20 +98,21 @@ const Player = () => {
             setCurrentDuration(v[0]);
           }}
         />
+
+        <div className="flex justify-between text-[11px] text-zinc-500">
+          <span>{fmt(currentDuration)}</span>
+          <span>{fmt(duration)}</span>
+        </div>
       </div>
 
-      <div className="mb-5 flex justify-between text-xs text-zinc-500">
-        <span>{fmt(currentDuration)}</span>
-        <span>{fmt(duration)}</span>
-      </div>
-
-      <div className="flex items-center justify-between">
+      <div className="mt-6 flex items-center justify-center gap-6">
         <button
           onClick={() => setIsMute((m) => !m)}
           className="
             rounded-xl border border-zinc-200 dark:border-zinc-700
             bg-zinc-100 dark:bg-zinc-800
-            p-2 transition hover:bg-zinc-200 dark:hover:bg-zinc-700
+            p-2 transition
+            hover:bg-zinc-200 dark:hover:bg-zinc-700
           "
         >
           {isMute ? (
@@ -133,7 +126,7 @@ const Player = () => {
           disabled={!selectedFile}
           onClick={() => setPlay((p) => !p)}
           className="
-            flex h-12 w-12 items-center justify-center
+            flex h-14 w-14 items-center justify-center
             rounded-full
             bg-linear-to-br from-indigo-500 to-purple-600
             text-white shadow-lg
@@ -141,9 +134,9 @@ const Player = () => {
           "
         >
           {isPlay ? (
-            <Pause className="h-5 w-5" />
+            <Pause className="h-6 w-6" />
           ) : (
-            <Play className="h-5 w-5 translate-x-px" />
+            <Play className="h-6 w-6 translate-x-px" />
           )}
         </button>
 
@@ -152,14 +145,15 @@ const Player = () => {
           className={`
             rounded-xl border border-zinc-200 dark:border-zinc-700
             bg-zinc-100 dark:bg-zinc-800
-            p-2 transition hover:bg-zinc-200 dark:hover:bg-zinc-700
+            p-2 transition
+            hover:bg-zinc-200 dark:hover:bg-zinc-700
             ${isLooped ? "text-green-400 ring-1 ring-green-400/40" : ""}
           `}
         >
           <Repeat className="h-4 w-4" />
         </button>
       </div>
-    </div>
+    </section>
   );
 };
 
