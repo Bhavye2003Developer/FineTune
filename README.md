@@ -4,8 +4,6 @@ A **modern, offline local media player** built for the web. FineTune allows user
 
 The app is designed with a focus on **performance, simplicity, and aesthetics**, while keeping everything fully local — no server uploads, no external storage.
 
----
-
 ## Features
 
 - Local File Upload
@@ -23,25 +21,23 @@ The app is designed with a focus on **performance, simplicity, and aesthetics**,
 - Storage Management
   Enforces per-file and total storage constraints.
 
----
-
 ## How It Works
 
 - Files are stored **locally in the browser** (no cloud, no backend).
 - Storage limits are enforced at upload time to prevent overflow.
 - Playback is handled via the HTML5 Audio/Video APIs.
 
----
+
 
 ## Storage
 
 | Storage Aspect        | Details                                      |
-| --------------------- | -------------------------------------------- |
+|  | -- |
 | Maximum file size     | 120 MB per file                              |
 | Maximum total storage | 150 MB                                       |
 | Storage mechanism     | Browser-based persistent storage (IndexedDB) |
 
----
+
 
 ## Tech Stack
 
@@ -52,7 +48,7 @@ The app is designed with a focus on **performance, simplicity, and aesthetics**,
 - **Lucide Icons** - Clean iconography
 - **IndexedDB** - Local persistent storage
 
----
+
 
 ## Project Goals
 
@@ -61,7 +57,7 @@ The app is designed with a focus on **performance, simplicity, and aesthetics**,
 - Maintain a **clean, professional UI**
 - Enforce strict storage limits
 
----
+
 
 ## License
 
