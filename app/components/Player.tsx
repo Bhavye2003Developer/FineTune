@@ -7,7 +7,7 @@ import { fmt } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 
 const Player = () => {
-  const { selectedFile, nextFile, selectFile } = usePlayerStore();
+  const { selectedFile } = usePlayerStore();
 
   const [duration, setDuration] = useState(0);
   const [currentDuration, setCurrentDuration] = useState(0);
@@ -18,6 +18,21 @@ const Player = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const objectUrlRef = useRef<string | null>(null);
 
+useEffect(() => {
+  const audio = audioRef.current;
+  if (!audio) return;
+
+  audio.onended = () => {
+    const { nextFile, selectFile } = usePlayerStore.getState();
+
+    if (nextFile) {
+      selectFile(nextFile);
+    } else {
+      setPlay(false);
+    }
+  };
+}, []);
+
   useEffect(() => {
     audioRef.current = new Audio();
     return () => {
@@ -27,35 +42,29 @@ const Player = () => {
   }, []);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio || !selectedFile) return;
+  const audio = audioRef.current;
+  if (!audio || !selectedFile) return;
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setPlay(true);
-    setCurrentDuration(0);
-    setDuration(0);
+  setPlay(true);
+  setCurrentDuration(0);
+  setDuration(0);
 
-    audio.pause();
-    audio.currentTime = 0;
+  audio.pause();
+  audio.currentTime = 0;
 
-    if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
+  if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
 
-    const url = URL.createObjectURL(selectedFile.blob);
-    objectUrlRef.current = url;
-    audio.src = url;
+  const url = URL.createObjectURL(selectedFile.blob);
+  objectUrlRef.current = url;
+  audio.src = url;
 
-    audio.onloadedmetadata = () => {
-      setDuration(audio.duration || 0);
-      audio.play().catch(() => setPlay(false));
-    };
+  audio.onloadedmetadata = () => {
+    setDuration(audio.duration || 0);
+    audio.play().catch(() => setPlay(false));
+  };
 
-    audio.ontimeupdate = () => setCurrentDuration(audio.currentTime);
-
-    audio.onended = () => {
-      if (nextFile) selectFile(nextFile);
-      else setPlay(false);
-    };
-  }, [selectedFile, selectFile]);
+  audio.ontimeupdate = () => setCurrentDuration(audio.currentTime);
+}, [selectedFile]);
 
   useEffect(() => {
     const audio = audioRef.current;
