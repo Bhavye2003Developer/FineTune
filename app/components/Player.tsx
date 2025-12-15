@@ -55,7 +55,7 @@ const Player = () => {
       if (nextFile) selectFile(nextFile);
       else setPlay(false);
     };
-  }, [selectedFile, nextFile, selectFile]);
+  }, [selectedFile, selectFile]);
 
   useEffect(() => {
     const audio = audioRef.current;
