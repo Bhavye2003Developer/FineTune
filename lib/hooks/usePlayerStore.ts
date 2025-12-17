@@ -17,7 +17,7 @@ const usePlayerStore = create<PlayerState>()((set) => ({
   },
   addToNext(file) {
     set((state) => ({ ...state, nextFile: file }));
-    toast.success("Added to queue");
+    toast.success("Audio will play next");
   },
 }));
 
