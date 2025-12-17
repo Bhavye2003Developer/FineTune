@@ -7,7 +7,7 @@ import { fmt } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 
 const Player = () => {
-  const { selectedFile } = usePlayerStore();
+  const { selectedFile, nextFile, selectFile } = usePlayerStore();
 
   const [duration, setDuration] = useState(0);
   const [currentDuration, setCurrentDuration] = useState(0);
@@ -18,53 +18,64 @@ const Player = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const objectUrlRef = useRef<string | null>(null);
 
-useEffect(() => {
-  const audio = audioRef.current;
-  if (!audio) return;
-
-  audio.onended = () => {
-    const { nextFile, selectFile } = usePlayerStore.getState();
-
-    if (nextFile) {
-      selectFile(nextFile);
-    } else {
-      setPlay(false);
-    }
-  };
-}, []);
-
   useEffect(() => {
-    audioRef.current = new Audio();
+    const audio = new Audio();
+    audioRef.current = audio;
+
     return () => {
-      audioRef.current?.pause();
+      audio.pause();
+      if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
       audioRef.current = null;
     };
   }, []);
 
   useEffect(() => {
-  const audio = audioRef.current;
-  if (!audio || !selectedFile) return;
+    const audio = audioRef.current;
+    if (!audio || !selectedFile) return;
 
-  setPlay(true);
-  setCurrentDuration(0);
-  setDuration(0);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPlay(true);
+    setCurrentDuration(0);
+    setDuration(0);
 
-  audio.pause();
-  audio.currentTime = 0;
+    audio.pause();
+    audio.currentTime = 0;
 
-  if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
+    if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
 
-  const url = URL.createObjectURL(selectedFile.blob);
-  objectUrlRef.current = url;
-  audio.src = url;
+    const url = URL.createObjectURL(selectedFile.blob);
+    objectUrlRef.current = url;
+    audio.src = url;
 
-  audio.onloadedmetadata = () => {
-    setDuration(audio.duration || 0);
-    audio.play().catch(() => setPlay(false));
-  };
+    const onLoaded = () => {
+      setDuration(audio.duration || 0);
+      audio.play().catch(() => setPlay(false));
+    };
 
-  audio.ontimeupdate = () => setCurrentDuration(audio.currentTime);
-}, [selectedFile]);
+    const onTimeUpdate = () => {
+      setCurrentDuration(audio.currentTime);
+    };
+
+    const onEnded = () => {
+      if (audio.loop) return;
+
+      setPlay(false);
+
+      if (nextFile) {
+        selectFile(nextFile);
+      }
+    };
+
+    audio.addEventListener("loadedmetadata", onLoaded);
+    audio.addEventListener("timeupdate", onTimeUpdate);
+    audio.addEventListener("ended", onEnded);
+
+    return () => {
+      audio.removeEventListener("loadedmetadata", onLoaded);
+      audio.removeEventListener("timeupdate", onTimeUpdate);
+      audio.removeEventListener("ended", onEnded);
+    };
+  }, [selectedFile, nextFile, selectFile]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -73,15 +84,17 @@ useEffect(() => {
     audio.loop = isLooped;
     audio.muted = isMute;
 
-    if (isPlay) audio.play();
-    else audio.pause();
+    if (isPlay) {
+      audio.play().catch(() => setPlay(false));
+    } else {
+      audio.pause();
+    }
   }, [isPlay, isLooped, isMute]);
 
   return (
     <section
       className="
-        w-full
-        rounded-3xl
+        w-full rounded-3xl
         border border-zinc-200/70 dark:border-zinc-700/60
         bg-white/70 dark:bg-zinc-900/50
         backdrop-blur-xl shadow-lg
@@ -103,7 +116,8 @@ useEffect(() => {
           max={duration || 0}
           step={0.1}
           onValueChange={(v) => {
-            audioRef.current!.currentTime = v[0];
+            if (!audioRef.current) return;
+            audioRef.current.currentTime = v[0];
             setCurrentDuration(v[0]);
           }}
         />
